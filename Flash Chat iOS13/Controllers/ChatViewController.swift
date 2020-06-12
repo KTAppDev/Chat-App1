@@ -77,7 +77,7 @@ class ChatViewController: UIViewController {
                 K.FStore.senderField: messageSender,
                 K.FStore.bodyField: messageBody,
                 K.FStore.dateField: Date().timeIntervalSince1970,
-               //K.FStore.extra: "ghsjfdhfds"
+               K.FStore.extra: "ghsjfdhfds"
             ]) { (error) in
                 if let e = error {
                     
