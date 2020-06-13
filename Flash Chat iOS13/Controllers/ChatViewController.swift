@@ -12,6 +12,7 @@ class ChatViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
+    
     let db = Firestore.firestore()
     
     var messages: [Message] = []
@@ -25,96 +26,63 @@ class ChatViewController: UIViewController {
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
         navigationItem.hidesBackButton = true
         title = K.appName
-        
-        loadMessages()
-        
-        
-        
-                
-        }
-        
-    
-    func callUser() -> String {
-        let userName: String = ""
 
-        if let userName = Auth.auth().currentUser?.email {
-          return userName
-            
-        } else {
-            return "user not there"
-        }
-    }
-    
-    func createCollection() {
-        //let messageSender = callUser()
-       // let messageBody:String = ""
-        db.collection(callUser()).addDocument(data: [
-            K.FStore.collectionId: "1234"
-        ]) { (error) in
-            if let e = error {
-                
-                print("there was an issue saving data to firestore - \(e)")
-            } else {
-                
-                print("successfully saved data!")
-            }
-        }
+        loadMessages()
+ 
+        
         
     }
-    
-    
     
     func loadMessages() {
-
+        
         
         createCollection()
-
+        
         db.collection(callUser())
-        .order(by: K.FStore.dateField)
-        .addSnapshotListener { (querySnapshot, error) in
-            self.messages = []
-          
-
-            
-            if let e = error {
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { (querySnapshot, error) in
+                self.messages = []
                 
-                print("there was an issue getting the data from Fstore \(e)")
-            } else {
                 
-                if let snapshotDocuments = querySnapshot?.documents {
-                    for doc in snapshotDocuments {
-                        let data = doc.data()
-                        if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
-                            let newMessage = Message(sender: messageSender, body: messageBody)
-                            self.messages.append(newMessage)
-                            
-                            DispatchQueue.main.async {
-                                self.tableView.reloadData()
-                                let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
-                                self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-                                //print(self.db.collection(self.callUser()).whereField("1234", in: ["collectionName"]))
+                if let e = error {
+                    
+                    print("there was an issue getting the data from Fstore \(e)")
+                } else {
+                    
+                    if let snapshotDocuments = querySnapshot?.documents {
+                        for doc in snapshotDocuments {
+                            let data = doc.data()
+                            if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                                let newMessage = Message(sender: messageSender, body: messageBody)
+                                self.messages.append(newMessage)
+                                
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                    let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+                                    self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                                    
+                                }
                             }
                         }
+                        
                     }
+                    
                     
                 }
                 
-                
-            }
-        
         }
         
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
         
-      
+        
         if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
             db.collection(callUser()).addDocument(data: [
                 K.FStore.senderField: messageSender,
                 K.FStore.bodyField: messageBody,
                 K.FStore.dateField: Date().timeIntervalSince1970,
-              
+                
             ]) { (error) in
                 if let e = error {
                     
@@ -171,10 +139,10 @@ extension ChatViewController: UITableViewDataSource {
             cell.rightImageView.isHidden = false
             cell.messaageBubble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
             cell.label.textColor = UIColor(named: K.BrandColors.purple)
-    
+            
         }
         else {
-           // the recipient
+            // the recipient
             cell.leftImageView.isHidden = false
             cell.rightImageView.isHidden = true
             cell.messaageBubble.backgroundColor = UIColor(named: K.BrandColors.purple)
@@ -189,5 +157,6 @@ extension ChatViewController: UITableViewDataSource {
         
         return cell
     }
+    
     
 }
