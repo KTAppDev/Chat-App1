@@ -34,13 +34,47 @@ class ChatViewController: UIViewController {
         }
         
     
+    func callUser() -> String {
+        let userName: String = ""
+
+        if let userName = Auth.auth().currentUser?.email {
+          return userName
+            
+        } else {
+            return "user not there"
+        }
+    }
+    
+    func createCollection() {
+        //let messageSender = callUser()
+       // let messageBody:String = ""
+        db.collection(callUser()).addDocument(data: [
+            K.FStore.collectionId: "1234"
+        ]) { (error) in
+            if let e = error {
+                
+                print("there was an issue saving data to firestore - \(e)")
+            } else {
+                
+                print("successfully saved data!")
+            }
+        }
+        
+    }
+    
+    
     
     func loadMessages() {
+
         
-        db.collection(K.FStore.collectionName)
+        createCollection()
+
+        db.collection(callUser())
         .order(by: K.FStore.dateField)
         .addSnapshotListener { (querySnapshot, error) in
             self.messages = []
+          
+
             
             if let e = error {
                 
@@ -58,6 +92,7 @@ class ChatViewController: UIViewController {
                                 self.tableView.reloadData()
                                 let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
                                 self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+                                //print(self.db.collection(self.callUser()).whereField("1234", in: ["collectionName"]))
                             }
                         }
                     }
@@ -72,12 +107,14 @@ class ChatViewController: UIViewController {
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
+        
+      
         if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
-            db.collection(K.FStore.collectionName).addDocument(data: [
+            db.collection(callUser()).addDocument(data: [
                 K.FStore.senderField: messageSender,
                 K.FStore.bodyField: messageBody,
                 K.FStore.dateField: Date().timeIntervalSince1970,
-               K.FStore.extra: "ghsjfdhfds"
+              
             ]) { (error) in
                 if let e = error {
                     
@@ -99,6 +136,7 @@ class ChatViewController: UIViewController {
         
         do {
             try Auth.auth().signOut()
+            
             navigationController?.popToRootViewController(animated: true)
             
         } catch let signOutError as NSError {
