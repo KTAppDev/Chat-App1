@@ -18,6 +18,10 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         infolabel.text = ""
+        
+        emailTextfield.delegate = self
+        passwordTextfield.delegate = self
+        
     }
     
     
@@ -66,4 +70,15 @@ class LoginViewController: UIViewController {
             }
         }
 }
+    
+    
+   
 }
+
+extension LoginViewController: UITextFieldDelegate {
+       
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        infolabel.text = ""
+    }
+       
+   }

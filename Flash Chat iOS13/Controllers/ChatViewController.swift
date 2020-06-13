@@ -28,7 +28,7 @@ class ChatViewController: UIViewController {
         title = K.appName
 
         loadMessages()
- 
+ messageRef()
         
         
     }

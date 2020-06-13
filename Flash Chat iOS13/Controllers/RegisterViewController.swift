@@ -12,7 +12,12 @@ class RegisterViewController: UIViewController {
 
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
+    @IBOutlet weak var infoLabel: UILabel!
     
+    override func viewDidLoad() {
+        emailTextfield.delegate = self
+        passwordTextfield.delegate = self
+    }
     
     @IBAction func registerPressed(_ sender: UIButton) {
         
@@ -20,7 +25,7 @@ class RegisterViewController: UIViewController {
             
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let e = error {
-                print(e.localizedDescription)
+                self.infoLabel.text = e.localizedDescription
             } else {
                 self.performSegue(withIdentifier: K.registerSegue, sender: self)
             }
@@ -28,5 +33,13 @@ class RegisterViewController: UIViewController {
             }
         }
     }
+    
+}
+
+extension RegisterViewController: UITextFieldDelegate {
+        
+ func textFieldDidBeginEditing(_ textField: UITextField) {
+     infoLabel.text = ""
+ }
     
 }

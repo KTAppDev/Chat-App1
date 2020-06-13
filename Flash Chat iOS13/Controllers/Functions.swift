@@ -44,7 +44,31 @@ func createCollection() {
     
 }
 
+func messageRef() {
+    
+    let messageRef = db.collectionGroup("clint@mail.com")
+ let query = messageRef.whereField("1234", isEqualTo: "Hi")
+   
+    query.getDocuments { (querySnapshot, error) in
+        if let err = error {
+            print("error getting docs \(err)")
+  
+        } else {
+            for document in querySnapshot!.documents {
+                //print("\(document.documentID) => \(document.data())")
+                
+                //print(document)
+                
+            }
+            
+            
+            
+        }
+    }
+    
 
+    
+}
 
 
 
@@ -64,9 +88,10 @@ func createCollection() {
 //    let messageRef = db.collectionGroup("clint@mail.com")
 //
 //    let query = messageRef.whereField("1234", isEqualTo: "Hi")
+//    let
 //
 //
 //return queryStr
 //}
 //
-
+//
